@@ -1,6 +1,6 @@
 === Usus WooCommerce Price Calculator ===
-Contributors: Chris Butler
-Donate link:
+Contributors:UsusIpse
+Donate link:https://ususipse.com/
 Tags:calculator, attribute, attribute-calculator, woocommerce, length, length-calculator, product, product-attribute-calculator, product-length-calculator
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -23,12 +23,15 @@ This is designed to work with the attribute slug from Woo. So if you call your a
 but
 1foot will return a non value, so don't mess with the slugs unless you know what you are doing
 
+
 == Frequently Asked Questions ==
 
-Be the first!
 
 == Screenshots ==
-
+1. Enable calculator and define attribute
+2. Create attribute and add terms
+3. Add variation to product
+4. Price will be reflected on the product page
 
 == Changelog ==
 
