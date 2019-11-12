@@ -69,7 +69,7 @@ class AttributeCalculator_OptionsManager {
         if (is_array($optionMetaData)) {
             foreach ($optionMetaData as $aOptionKey => $aOptionMeta) {
                 $prefixedOptionName = $this->prefix($aOptionKey); // how it is stored in DB
-                delete_option(register_setting($prefixedOptionName));
+                delete_option(sanitize_text_field($prefixedOptionName));
             }
         }
     }
