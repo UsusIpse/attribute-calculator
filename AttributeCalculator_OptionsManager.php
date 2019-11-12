@@ -69,7 +69,7 @@ class AttributeCalculator_OptionsManager {
         if (is_array($optionMetaData)) {
             foreach ($optionMetaData as $aOptionKey => $aOptionMeta) {
                 $prefixedOptionName = $this->prefix($aOptionKey); // how it is stored in DB
-                delete_option($prefixedOptionName);
+                delete_option(register_setting($prefixedOptionName));
             }
         }
     }
@@ -124,7 +124,7 @@ class AttributeCalculator_OptionsManager {
         if (!$retVal && $default) {
             $retVal = $default;
         }
-        return $retVal;
+        return sanitize_text_field($retVal);
     }
 
     /**
@@ -135,7 +135,7 @@ class AttributeCalculator_OptionsManager {
      */
     public function deleteOption($optionName) {
         $prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
-        return delete_option($prefixedOptionName);
+        return delete_option(sanitize_text_field($prefixedOptionName));
     }
 
     /**
@@ -147,7 +147,7 @@ class AttributeCalculator_OptionsManager {
      */
     public function addOption($optionName, $value) {
         $prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
-        return add_option($prefixedOptionName, $value);
+        return add_option(sanitize_text_field($prefixedOptionName), sanitize_text_field($value));
     }
 
     /**
@@ -159,7 +159,7 @@ class AttributeCalculator_OptionsManager {
      */
     public function updateOption($optionName, $value) {
         $prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
-        return update_option($prefixedOptionName, $value);
+        return update_option(sanitize_text_field($prefixedOptionName), sanitize_text_field($value));
     }
 
     /**
@@ -173,7 +173,7 @@ class AttributeCalculator_OptionsManager {
      * @return string role name
      */
     public function getRoleOption($optionName) {
-        $roleAllowed = $this->getOption($optionName);
+        $roleAllowed = $this->getOption(sanitize_text_field($optionName));
         if (!$roleAllowed || $roleAllowed == '') {
             $roleAllowed = 'Administrator';
         }
@@ -252,7 +252,7 @@ class AttributeCalculator_OptionsManager {
         $settingsGroup = get_class($this) . '-settings-group';
         $optionMetaData = $this->getOptionMetaData();
         foreach ($optionMetaData as $aOptionKey => $aOptionMeta) {
-            register_setting($settingsGroup, $aOptionMeta);
+            register_setting(register_setting($settingsGroup), register_setting($aOptionMeta));
         }
     }
 

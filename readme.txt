@@ -1,4 +1,4 @@
-=== Usus WooCommerce Price Calculator ===
+=== Attribute Calculator ===
 Contributors:UsusIpse
 Donate link:https://ususipse.com/
 Tags:calculator, attribute, attribute-calculator, woocommerce, length, length-calculator, product, product-attribute-calculator, product-length-calculator
