@@ -2,7 +2,7 @@
 /*
    Plugin Name: Attribute Calculator
    Plugin URI: http://wordpress.org/extend/plugins/attribute-calculator/
-   Version: 1.0
+   Version: 1.2
    Author: Chris Butler
    Description: Allows you to define an attribute to multiply your product's price in WooCommerce
    Text Domain: attribute-calculator

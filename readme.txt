@@ -1,12 +1,14 @@
 === Attribute Calculator ===
 Contributors:UsusIpse
 Donate link:https://ususipse.com/
-Tags:calculator, attribute, attribute-calculator, woocommerce, length, length-calculator, product, product-attribute-calculator, product-length-calculator
+Tags:calculator, attribute, attribute-calculator, woocommerce, length, length-calculator, product, product-attribute-calculator, product-length-calculator, woocommerce
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 3.5
-Tested up to: 5.2.4
-Stable tag: 1.0
+Tested up to: 5.5.3
+Requires WooCommerce at least: 2.3.6
+Tested WooCommerce up to: 4.6.2
+Stable tag: 1.2
 
 Multiply price by definable product attribute
 
@@ -17,15 +19,16 @@ Multiply price by definable product attribute
 == Installation ==
 
 After activation you will have a new submenu under Plugins. Follow that to enable and set your attribute name.
-Make sure you have an attribute with a number and you are good to go. 
-This is designed to work with the attribute slug from Woo. So if you call your attribute 1 Foot, then the slug:
-1-foot will equal 1
-but
-1foot will return a non value, so don't mess with the slugs unless you know what you are doing
-
+Make sure you have an attribute terms with a number. ex: 1 Foot, 2 Feet, 4 Feet, ect
+This is designed to work with the attribute term's slug and will multiply by that number. 
+You then need to add this attribute to your variable products along with it's terms, click use for variations and then you can avoid making variations for products that are sold in length, ect.
 
 == Frequently Asked Questions ==
 
+
+==To Do ==
+
+Use attribute term description or other field to hold the multiplier. 
 
 == Screenshots ==
 1. Enable calculator and define attribute
@@ -35,6 +38,8 @@ but
 
 == Changelog ==
 
-= 0.1 = - addded front end Js function to update the price as the variations are updated. No changes are made to the actual price and theme support may vary. 
+= 1.2 = - Better use of JSON object
+
 - Initial Revision
 = 1.0 = - Push to GitHub and Automatic
+= 0.1 = - addded front end Js function to update the price as the variations are updated. No changes are made to the actual price and theme support may vary. 

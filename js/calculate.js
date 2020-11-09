@@ -15,7 +15,7 @@ $('.single_variation_wrap .single_variation .price').append('<span class="length
 			console.log(' x ' + theLength + ' = ' + theVal.theCurrency + total);
 			
 		}else{
-			//console.log('nope');
+			console.log('nope');
 			//$('table.variations').append(theVal.theError);
 		}
 		

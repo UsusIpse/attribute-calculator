@@ -14,7 +14,7 @@ class AttributeCalculator_Plugin extends AttributeCalculator_LifeCycle {
         return array(
             //'_version' => array('Installed Version'), // Leave this one commented-out. Uncomment to test upgrades.
             'multiplyBy' => array(__('Slug of the attribute to multiply by. (typically length)', 'uwcpc')),
-            'isEnabled' => array(__('Enable calculator globally', 'uwcpc'), 'true', 'false')
+            'isEnabled' => array(__('1', 'uwcpc'))
         );
     }
 
@@ -68,14 +68,27 @@ class AttributeCalculator_Plugin extends AttributeCalculator_LifeCycle {
 		// load calculator Js script if we are on the product page	
 		add_action('wp_enqueue_scripts', array(&$this, 'calculate_length_change_script'));
 		
+		add_action('admin_enqueue_scripts', array(&$this, 'attcalc_admin_scripts'));
 		
+		add_action('add_meta_boxes', [&$this, 'attcalc_create_metabox']);
 
     }	
+	public function attcalc_admin_scripts(){
+		wp_register_script('attcalc-admin', plugin_dir_url(__FILE__) . '/js/calcadmin.js', array('jquery'), '', true );
+	}
+	public function attcalc_create_metabox(){
+		if(is_admin()){		
+			add_meta_box('attcalc-control-panel', 'Attribute Calculator Settings', [&$this, 'attcalc_control_panel'], 'product', 'normal', 'high');
+		}		
+	}
+	public function attcalc_control_panel(){
+		echo 'raaaaaaaaaaaaaaaaaaaaaaawr';
+	}
 	public function calculate_length_change_script(){
 		global $post_type;
 		wp_register_script('frontcalc', plugin_dir_url(__FILE__) . '/js/calculate.js', array('jquery'), '', true );
 		
-		if($this->getOption('isEnabled') == 'true' && $post_type == 'product'){
+		if($this->getOption('isEnabled') == '1' && $post_type == 'product'){
 			global $woocommerce;
 			$multiplyBy = $this->getOption('multiplyBy');
 			$variError = __('There is no variation named: ', 'uwcpc') . $this->getOption('multiplyBy');
@@ -123,12 +136,16 @@ class AttributeCalculator_Plugin extends AttributeCalculator_LifeCycle {
 		
 		if (isset($_POST[$theMulti]) ) {
 		
-				$cPrice = substr($_POST[$theMulti], 0, strpos($_POST[$theMulti], '-'));
-				
+				//$cPrice = substr($_POST[$theMulti], 0, strpos($_POST[$theMulti], '-'));
+				$cPrice = $_POST[$theMulti];
 				$_product_id = $variation_id > 0 ? $variation_id : $product_id;
 
 				$product = wc_get_product($_product_id); // The WC_Product Object
 				$base_price = (float) $product->get_regular_price(); // Get the product regular price
+				
+				echo 'post:'. $_POST[$theMulti];
+				echo '</br>cprice:'.$cPrice;
+				echo '</br>baseprice:'.$base_price;
 
 				$cart_item_data['custom_data']['base_price'] = $base_price;
 				$cart_item_data['custom_data']['new_price'] = $base_price * $cPrice;
@@ -141,6 +158,88 @@ class AttributeCalculator_Plugin extends AttributeCalculator_LifeCycle {
 
 		return $cart_item_data;
 	}
+	
+	    public function settingsPage() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'attribute-calculator'));
+        }
+		wp_enqueue_script('attcalc-admin');
+		wp_enqueue_style('attcalc-admin-style', plugins_url('/css/admin-style.css', __FILE__));
+        $optionMetaData = $this->getOptionMetaData();
+
+        // Save Posted Options
+        if ($optionMetaData != null) {
+            foreach ($optionMetaData as $aOptionKey => $aOptionMeta) {
+                if (isset($_POST[$aOptionKey])) {
+                    $this->updateOption($aOptionKey, $_POST[$aOptionKey]);
+                }
+            }
+        }
+
+        // HTML for the page
+        $settingsGroup = get_class($this) . '-settings-group';
+        ?>
+        <div class="wrap">
+            <h2><?php _e('System Settings', 'attribute-calculator'); ?></h2>
+            <table cellspacing="1" cellpadding="2"><tbody>
+            <tr><td><?php _e('System', 'attribute-calculator'); ?></td><td><?php echo php_uname(); ?></td></tr>
+            <tr><td><?php _e('PHP Version', 'attribute-calculator'); ?></td>
+                <td><?php echo phpversion(); ?>
+                <?php
+                if (version_compare('5.2', phpversion()) > 0) {
+                    echo '&nbsp;&nbsp;&nbsp;<span style="background-color: #ffcc00;">';
+                    _e('(WARNING: This plugin may not work properly with versions earlier than PHP 5.2)', 'attribute-calculator');
+                    echo '</span>';
+                }
+                ?>
+                </td>
+            </tr>
+            <tr><td><?php _e('MySQL Version', 'attribute-calculator'); ?></td>
+                <td><?php echo $this->getMySqlVersion() ?>
+                    <?php
+                    echo '&nbsp;&nbsp;&nbsp;<span style="background-color: #ffcc00;">';
+                    if (version_compare('5.0', $this->getMySqlVersion()) > 0) {
+                        _e('(WARNING: This plugin may not work properly with versions earlier than MySQL 5.0)', 'attribute-calculator');
+                    }
+                    echo '</span>';
+                    ?>
+                </td>
+            </tr>
+            </tbody></table>
+
+            <h2><?php echo $this->getPluginDisplayName(); echo ' '; _e('Settings', 'attribute-calculator'); ?></h2>
+
+            <form method="post" action="">
+            <?php settings_fields($settingsGroup); ?>
+              
+                <table class="plugin-options-table"><tbody>
+                <?php
+                if ($optionMetaData != null) {
+                    foreach ($optionMetaData as $aOptionKey => $aOptionMeta) {
+                        $displayText = is_array($aOptionMeta) ? $aOptionMeta[0] : $aOptionMeta;
+						($displayText==1 || $displayText==2) ? $displayText = "Enable Globally" : null ;
+						?>
+							<tr valign="top">
+								<th scope="row"><p>--<label for="<?php echo $aOptionKey ?>"><?php echo $displayText ?></label></p></th>
+								<td>
+								<?php $this->createFormControl($aOptionKey, $aOptionMeta, $this->getOption($aOptionKey)); ?>
+								</td>
+							</tr>
+						<?php
+						
+                    }
+                }
+                ?>
+                </tbody></table>
+                <p class="submit">
+                    <input type="submit" class="button-primary"
+                           value="<?php _e('Save Changes', 'attribute-calculator') ?>"/>
+                </p>
+            </form>
+        </div>
+        <?php
+
+    }
 
 
 }

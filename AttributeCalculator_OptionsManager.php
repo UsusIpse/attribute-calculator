@@ -281,7 +281,8 @@ class AttributeCalculator_OptionsManager {
         $settingsGroup = get_class($this) . '-settings-group';
         ?>
         <div class="wrap">
-            <h2><?php _e('System Settings', 'attribute-calculator'); ?></h2>
+            <h2><?php
+			_e('System Settings', 'attribute-calculator'); ?></h2>
             <table cellspacing="1" cellpadding="2"><tbody>
             <tr><td><?php _e('System', 'attribute-calculator'); ?></td><td><?php echo php_uname(); ?></td></tr>
             <tr><td><?php _e('PHP Version', 'attribute-calculator'); ?></td>
@@ -358,26 +359,35 @@ class AttributeCalculator_OptionsManager {
     protected function createFormControl($aOptionKey, $aOptionMeta, $savedOptionValue) {
         if (is_array($aOptionMeta) && count($aOptionMeta) >= 2) { // Drop-down list
             $choices = array_slice($aOptionMeta, 1);
-            ?>
-            <p><select name="<?php echo $aOptionKey ?>" id="<?php echo $aOptionKey ?>">
-            <?php
-                            foreach ($choices as $aChoice) {
-                $selected = ($aChoice == $savedOptionValue) ? 'selected' : '';
-                ?>
-                    <option value="<?php echo $aChoice ?>" <?php echo $selected ?>><?php echo $this->getOptionValueI18nString($aChoice) ?></option>
-                <?php
-            }
-            ?>
-            </select></p>
-            <?php
-
+			
+			?>
+			<p><select name="<?php echo $aOptionKey ?>" id="<?php echo $aOptionKey ?>">
+			<?php
+			foreach ($choices as $aChoice) {
+				$selected = ($aChoice == $savedOptionValue) ? 'selected' : '';
+				?>
+					<option value="<?php echo $aChoice ?>" <?php echo $selected ?>><?php echo $this->getOptionValueI18nString($aChoice) ?></option>
+				<?php
+			}
+			?>
+			</select></p>
+			<?php
+		
         }
-        else { // Simple input field
-            ?>
-            <p><input type="text" name="<?php echo $aOptionKey ?>" id="<?php echo $aOptionKey ?>"
-                      value="<?php echo esc_attr($savedOptionValue) ?>" size="50"/></p>
-            <?php
-
+        else { // Simple input field or checkbox
+			if($savedOptionValue=="1" || $savedOptionValue=="0"){								
+				($savedOptionValue==1)?$check="checked":$check="";					
+				?><input type="hidden" name="<?php echo $aOptionKey ?>" value="0"/>
+				<p><input type="checkbox" name="<?php echo $aOptionKey ?>" id="<?php echo $aOptionKey ?>"
+				  value="1" <?php echo $check; ?>/></p>					
+				<?php
+					
+			}else{
+			?>
+			<p><input type="text" name="<?php echo $aOptionKey ?>" id="<?php echo $aOptionKey ?>"
+					  value="<?php echo esc_attr($savedOptionValue) ?>" size="50"/></p>
+			<?php
+			}
         }
     }
 
